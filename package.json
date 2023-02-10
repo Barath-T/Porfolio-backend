@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/Barath-T/portfolio-backend.git"
+    "url": "git@github.com:Barath-T/Porfolio-backend.git"
   },
   "author": "Barath-T",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Barath-T/portfolio-backend/issues"
+    "url": "https://github.com/Barath-T/Porfolio-backend/issues"
   },
-  "homepage": "https://github.com/Barath-T/portfolio-backend#readme",
+  "homepage": "https://github.com/Barath-T/Porfolio-backend#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",

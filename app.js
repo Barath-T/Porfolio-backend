@@ -20,7 +20,7 @@ mongoose
    .catch((err) => logger.error(err));
 
 app.use(cors());
-
+app.use(express.static("build"));
 app.use(bodyParser.json({ limit: "15mb" }));
 app.use(bodyParser.urlencoded({ limit: "15mb", extended: false }));
 
