@@ -27,4 +27,5 @@ app.use(bodyParser.urlencoded({ limit: "15mb", extended: false }));
 app.use("/api/skills", skillsRouter);
 app.use("/api/projects", projectsRouter);
 app.use("/api/details", detailsRouter);
+
 module.exports = app;

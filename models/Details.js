@@ -17,6 +17,13 @@ const detailsSchema = new mongoose.Schema({
 		type: String,
 		required: true
 	},
+	available: {
+		type: Date,
+		required: true,
+		
+		timestamps: false
+	}
+	
 });
 
 module.exports = mongoose.model("Details", detailsSchema);
