@@ -9,6 +9,9 @@ const cors = require("cors");
 const skillsRouter = require("./controllers/skills");
 const projectsRouter = require("./controllers/projects");
 const detailsRouter = require("./controllers/details");
+const usersRouter = require("./controllers/users");
+const loginRouter = require("./controllers/login");
+const articlesRouter = require("./controllers/articles");
 
 const logger = require("./utils/logger");
 const config = require("./utils/config");
@@ -27,5 +30,10 @@ app.use(bodyParser.urlencoded({ limit: "15mb", extended: false }));
 app.use("/api/skills", skillsRouter);
 app.use("/api/projects", projectsRouter);
 app.use("/api/details", detailsRouter);
+
+app.use("/api/users", usersRouter);
+app.use("/api/login", loginRouter);
+
+app.use("/api/articles", articlesRouter);
 
 module.exports = app;

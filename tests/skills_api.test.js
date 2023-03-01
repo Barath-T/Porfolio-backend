@@ -26,7 +26,7 @@ describe("Skills", () => {
   logger.info("test started");
 
   it("two skills exists", async () => {
-    const response = await api.get("/api/skills");
+    const response = api.get("/api/skills");
     expect(response.body).toHaveLength(initialSkills.length);
   });
 
@@ -87,7 +87,7 @@ describe("Projects", ()=>{
 		logger.info("inserted projects");
 	});
 	it("projects can be retrieved", async()=>{
-		const response = await api.get("/api/projects");
+		const response = api.get("/api/projects");
 	//	logger.info(response.body);
 		expect(response.body).toHaveLength(initialProjects.length);
 	});
@@ -135,13 +135,13 @@ describe("Details", ()=>{
 		await Details.create(initialDetails);
 	});
 	it("can retrieve details", async()=>{
-		const response = await api.get("/api/details/");
+		const response = api.get("/api/details/");
 		const details = await Details.findOne({});
 		logger.info(details);
 		logger.info(response.body);
 		expect(response.body._id.toString()).toEqual(details._id.toString());
 	});
-	it.only("can be updated", async()=>{
+	it("can be updated", async()=>{
 		const mail = "barath1272003@gmail.com";
 		await api.put("/api/details/").send({mail}).expect(200);
 

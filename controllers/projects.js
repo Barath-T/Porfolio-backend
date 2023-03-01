@@ -20,7 +20,7 @@ projectRouter.post("/", async(request, response)=>{
 	if(!body)
 		return response.status(400).json({error: "content missing"});
 
-	const project = await Project(body);
+	const project = new Project(body);
 	const savedProject = await project.save();
 
 	response.status(201).send(savedProject);
