@@ -4,8 +4,10 @@ const jwt = require("jsonwebtoken");
 const Article = require("../models/Article");
 const User = require("../models/User");
 
+const getToken = require("./tokenHelper");
+
 articlesRouter.get("/", async (req, res)=>{
-    const articles = await Article.find({}).populate("author", {username: 1, articles: 1});
+    const articles = await Article.find({}, 'title desc createdAt updatedAt author').populate("author", {username: 1});
 
     return res.status(200).json(articles);
 });
@@ -28,10 +30,9 @@ articlesRouter.post("/", async (req, res)=>{
     if(!decodedToken){
         return res.status(401).json({error: "invalid token"});
     }
-    console.log("decoded: ", decodedToken.id);
+
     const user = await User.findOne({_id: decodedToken.id});
 
-    console.log("from db: ", user._id);
     const article = new Article({
         title, desc, image, content, author: user._id
     });
@@ -44,27 +45,33 @@ articlesRouter.post("/", async (req, res)=>{
     return res.status(201).send(savedArticle);
 
 });
+//commenting
+articlesRouter.post("/:id/comment", async(req, res)=>{
+    const { comment } = req.body;
+    const article = await Article.findOne({_id: req.params.id});
 
+    article.comments = article.comments.append(comment);
+    await article.save();
+
+    return res.status(200).end();
+});
+
+//needs to be implemented
 articlesRouter.put("/:id", async(req, res)=>{
     const article = await Article.findOne({_id: req.params.id});
     if(!article){
         return res.status(404).json({error:"article not found to update"});
     }
-
     return res.send(200).json({error: "cant update"});
-
 });
 
 articlesRouter.delete("/:id", async(req, res)=>{
    await Article.deleteOne({_id: req.params.id});
    return res.status(204).end();
 });
+
+
 module.exports = articlesRouter;
 
-function getToken(req){
-    const authorization = req.get("authorization");
-    if(authorization && authorization.toLowerCase().startsWith("bearer ")){
-        return authorization.substring(7);
-    }
-    return null;
-}
+
+

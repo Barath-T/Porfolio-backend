@@ -4,6 +4,8 @@ const jwt = require("jsonwebtoken");
 
 const User = require("../models/User");
 
+const getToken = require("./tokenHelper");
+
 loginRouter.post("/",
     async (req, res) => {
         const {username, password} = req.body;
@@ -31,5 +33,24 @@ loginRouter.post("/",
             .send({token, username: user.username});
 
     });
+
+//implement it.
+loginRouter.post("/tokenValid", async(request, response)=>{
+    const token = getToken(request);
+    console.log(token);
+    if(!token){
+        return response.status(401).json({error: "missing token"});
+    }
+
+    const decodedToken = jwt.verify(token, process.env.SECRET);
+    if(!decodedToken){
+        return response.status(401).json({error: "invalid token"});
+    }
+
+    const user = await User.findOne({_id: decodedToken.id});
+
+    return response.status(200).send(user);
+
+});
 
 module.exports = loginRouter;
