@@ -37,7 +37,6 @@ loginRouter.post("/",
 //implement it.
 loginRouter.post("/tokenValid", async(request, response)=>{
     const token = getToken(request);
-    console.log(token);
     if(!token){
         return response.status(401).json({error: "missing token"});
     }

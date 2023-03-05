@@ -7,20 +7,31 @@ const User = require("../models/User");
 const getToken = require("./tokenHelper");
 
 articlesRouter.get("/", async (req, res)=>{
-    const articles = await Article.find({}, 'title desc createdAt updatedAt author').populate("author", {username: 1});
+    const articles = await Article.find({}, 'title desc createdAt updatedAt author').limit(req.query.limit || 0).populate("author", {username: 1});
 
     return res.status(200).json(articles);
 });
 
 articlesRouter.get("/:id", async (req, res)=>{
-    const article = await Article.findOne({_id: req.params.id});
+    const article = await Article
+        .findOne({_id: req.params.id})
+        .populate(
+            {
+                path: "comments",
+                populate: {
+                    path: "author",
+                    select: "username _id"
+                    }
+            }
+        );
+    
     return article
         ? res.status(200).json(article)
         : res.status(404).end();
 })
 
 articlesRouter.post("/", async (req, res)=>{
-    const {title, desc, image, content } = req.body;
+    const { title, desc, image, content } = req.body;
 
     const token = getToken(req);
     if(!token){
@@ -47,13 +58,49 @@ articlesRouter.post("/", async (req, res)=>{
 });
 //commenting
 articlesRouter.post("/:id/comment", async(req, res)=>{
-    const { comment } = req.body;
-    const article = await Article.findOne({_id: req.params.id});
+    const article = await Article
+        .findOne({_id: req.params.id})
+        .populate(
+            {
+                path: "comments", 
+                populate: {
+                    path: "author",
+                    select: "username _id"
+                }
+            }
+        );
 
-    article.comments = article.comments.append(comment);
+    const token = getToken(req);
+    if(!token){
+        return res.status(401).json({error: "missing token"});
+    }
+    const decodedToken = jwt.verify(token, process.env.SECRET);
+    if(!decodedToken){
+        return res.status(401).json({error: "invalid token"});
+    }
+    const user = await User.findOne({_id: decodedToken.id});
+
+    const comment = {
+        comment: req.body.comment,
+        author: user.id
+    }
+    
+    article.comments = article.comments.concat(comment);
     await article.save();
 
-    return res.status(200).end();
+    const updatedArticle = await Article
+        .findOne({_id: req.params.id})
+        .populate(
+            {
+                path: "comments", 
+                populate: {
+                    path: "author",
+                    select: "username _id"
+                }
+            }
+        );
+
+    return res.status(200).send(updatedArticle);
 });
 
 //needs to be implemented
